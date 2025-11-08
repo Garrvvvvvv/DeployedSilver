@@ -1,3 +1,4 @@
+import { FaSpotify } from 'react-icons/fa';
 import { FaInstagram, FaLinkedinIn, FaYoutube } from 'react-icons/fa6';
 
 export default function Footer() {
@@ -57,22 +58,25 @@ export default function Footer() {
 
         {/* Social Media Logos at Bottom */}
         <div className="flex justify-center space-x-6 mt-8">
-          <a href="#" aria-label="Instagram" className="hover:text-gray-400">
+          <a href="https://www.instagram.com/arc_tiet/" aria-label="Instagram" className="hover:text-gray-400">
             <FaInstagram size={24} />
           </a>
-          <a href="#" aria-label="LinkedIn" className="hover:text-gray-400">
+          <a href="https://www.linkedin.com/company/thapar-alumni-relations/" aria-label="LinkedIn" className="hover:text-gray-400">
             <FaLinkedinIn size={24} />
           </a>
-          <a href="#" aria-label="YouTube" className="hover:text-gray-400">
+          <a href="https://www.youtube.com/@AlumniRelationsCellTIET" aria-label="YouTube" className="hover:text-gray-400">
             <FaYoutube size={24} />
+          </a>
+          <a href="https://open.spotify.com/show/0Bu6ILKEXigkmP0fw82wm8?si=rs936j77SN6wGVSRDwNXZw" aria-label="YouTube" className="hover:text-gray-400">
+            <FaSpotify size={24} />
           </a>
         </div>
 
-        {/* Bottom copyright */}
+        {/* Bottom copyright
         <div className="border-t border-gray-700 mt-8 pt-4 text-center text-xs text-gray-500">
           ©2025 All Rights Reserved. Alumni Relations Cell @Thapar University | 
           
-        </div>
+        </div> */}
       </div>
     </footer>
   );

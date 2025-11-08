@@ -131,9 +131,8 @@ function Home() {
 
   const marqueeLinks = [
     { href: "/register", text: "Register Now" },
-    { href: "/schedule", text: "View Event Schedule" },
-    { href: "/speakers", text: "Meet the Speakers" },
-    { href: "/gallery", text: "View Gallery" },
+    { href: "/eventflow", text: "View Event Schedule" },
+    { href: "/memories", text: "View Gallery" },
     { href: "/meetourteam", text: "Meet ARC Team" },
   ];
 
