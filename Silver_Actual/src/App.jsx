@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Routes, Route } from 'react-router';
 import './App.css';
 
-
 import Home from './pages/main/home';
 import Memories from './pages/main/memories';
 import EventFlow from './pages/main/eventFlow';
@@ -11,14 +10,16 @@ import Meetourteam from './pages/main/meetourteam';
 import ResponsiveAppBar from './components/navbar.jsx';
 import Footer from './components/footer.jsx';
 
+// USER auth
+import UserLogin from './pages/main/userlogin';
+import UserProtectedRoute from './components/UserProtectedRoutes';
 
+// ADMIN auth (existing)
 import Login from './pages/Admin/Login.jsx';
 import Dashboard from './pages/Admin/Dashboard.jsx';
 import HomeManager from './pages/Admin/HomeManager.jsx';
 import AdminMemories from './pages/Admin/AdminMemories.jsx';
 import AdminSidebar from './components/AdminSidebar.jsx';
-
-// Protected Route wrapper
 import AdminProtectedRoute from './components/ProtectedRoute.jsx';
 
 // Admin layout wrapper
@@ -42,8 +43,18 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/memories" element={<Memories />} />
         <Route path="/eventFlow" element={<EventFlow />} />
-        <Route path="/register" element={<Registration />} />
         <Route path="/meetourteam" element={<Meetourteam />} />
+
+        {/* USER auth */}
+        <Route path="/login" element={<UserLogin />} />
+        <Route
+          path="/register"
+          element={
+            <UserProtectedRoute>
+              <Registration />
+            </UserProtectedRoute>
+          }
+        />
 
         {/* 🛠 Admin Panel Routes */}
         <Route path="/admin/login" element={<Login />} />

@@ -1,7 +1,8 @@
-// controllers/adminImageController.js
-const cloudinary = require("cloudinary").v2;
-const Image = require("../models/Image");
-const streamifier = require("streamifier");
+// controllers/adminImageController.js  (ESM)
+
+import { v2 as cloudinary } from "cloudinary";
+import Image from "../models/Image.js";
+import streamifier from "streamifier";
 
 /* -------------------------------
  * Cloudinary Configuration
@@ -25,13 +26,10 @@ cloudinary.config({
  * ------------------------------- */
 function uploadBufferToCloudinary(buffer, folder = "silverjubilee") {
   return new Promise((resolve, reject) => {
-    const stream = cloudinary.uploader.upload_stream(
-      { folder },
-      (error, result) => {
-        if (error) return reject(error);
-        resolve(result);
-      }
-    );
+    const stream = cloudinary.uploader.upload_stream({ folder }, (error, result) => {
+      if (error) return reject(error);
+      resolve(result);
+    });
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }
@@ -44,7 +42,7 @@ const VALID_CATEGORIES = ["home_announcement", "home_memories", "memories_page"]
 /* -------------------------------
  * Upload Image
  * ------------------------------- */
-exports.uploadImage = async (req, res) => {
+export async function uploadImage(req, res) {
   try {
     if (!req.file) {
       return res.status(400).json({ message: "No file uploaded" });
@@ -52,15 +50,12 @@ exports.uploadImage = async (req, res) => {
 
     const { category } = req.body;
     if (!category || !VALID_CATEGORIES.includes(category)) {
-      return res.status(400).json({
-        message: `Invalid or missing category. Must be one of: ${VALID_CATEGORIES.join(", ")}`,
-      });
+      return res
+        .status(400)
+        .json({ message: `Invalid or missing category. Must be one of: ${VALID_CATEGORIES.join(", ")}` });
     }
 
-    const result = await uploadBufferToCloudinary(
-      req.file.buffer,
-      `silverjubilee/${category}`
-    );
+    const result = await uploadBufferToCloudinary(req.file.buffer, `silverjubilee/${category}`);
 
     const newImage = await Image.create({
       url: result.secure_url,
@@ -68,7 +63,6 @@ exports.uploadImage = async (req, res) => {
       category,
     });
 
-    // Frontend only needs _id, url, category
     return res.status(201).json({
       _id: newImage._id,
       url: newImage.url,
@@ -78,40 +72,36 @@ exports.uploadImage = async (req, res) => {
     console.error("uploadImage error:", err);
     return res.status(500).json({ message: "Upload failed", error: err.message });
   }
-};
+}
 
 /* -------------------------------
  * Get Images by Category
  * ------------------------------- */
-exports.getImages = async (req, res) => {
+export async function getImages(req, res) {
   try {
     const { category } = req.query;
-    const filter =
-      category && VALID_CATEGORIES.includes(category) ? { category } : {};
+    const filter = category && VALID_CATEGORIES.includes(category) ? { category } : {};
 
-    // Prefer createdAt (Mongoose timestamps). Fallback to uploadedAt if you had it.
     const images = await Image.find(filter).sort({
       createdAt: -1,
       uploadedAt: -1,
     });
 
-    // Return full docs (frontend uses _id and url). Keeping other fields is harmless.
     return res.json(images);
   } catch (err) {
     console.error("getImages error:", err);
     return res.status(500).json({ message: "Server error" });
   }
-};
+}
 
 /* -------------------------------
  * Delete Image
  * ------------------------------- */
-exports.deleteImage = async (req, res) => {
+export async function deleteImage(req, res) {
   try {
     const image = await Image.findById(req.params.id);
     if (!image) return res.status(404).json({ message: "Image not found" });
 
-    // Attempt to remove from Cloudinary, but still continue to delete DB doc.
     try {
       await cloudinary.uploader.destroy(image.public_id);
     } catch (e) {
@@ -119,11 +109,9 @@ exports.deleteImage = async (req, res) => {
     }
 
     await image.deleteOne();
-
-    // Frontend expects a simple ok response
     return res.json({ ok: true });
   } catch (err) {
     console.error("deleteImage error:", err);
     return res.status(500).json({ message: "Server error" });
   }
-};
+}

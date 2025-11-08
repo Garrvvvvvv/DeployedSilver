@@ -1,16 +1,23 @@
-// controllers/adminAuthController.js
-const Admin = require("../models/Admin");
-const jwt = require("jsonwebtoken");
+// controllers/adminAuthController.js (ESM, CJS-safe)
 
-// Register admin (only when guarded by ADMIN_SETUP_KEY as above)
-exports.registerAdmin = async (req, res) => {
+import * as AdminMod from "../models/Admin.js";
+import jwt from "jsonwebtoken";
+
+// Support both: module.exports = Admin  OR  export default Admin
+const Admin = AdminMod.default || AdminMod;
+
+// Register admin (only when guarded by ADMIN_SETUP_KEY in the route)
+export async function registerAdmin(req, res) {
   try {
     const { username, password } = req.body;
-    if (!username || !password)
+    if (!username || !password) {
       return res.status(400).json({ message: "Username and password required" });
+    }
 
     const exists = await Admin.findOne({ username: username.trim() });
-    if (exists) return res.status(400).json({ message: "Admin already exists" });
+    if (exists) {
+      return res.status(400).json({ message: "Admin already exists" });
+    }
 
     const admin = new Admin({ username: username.trim(), password });
     await admin.save();
@@ -19,21 +26,25 @@ exports.registerAdmin = async (req, res) => {
     console.error("registerAdmin error:", error);
     return res.status(500).json({ message: "Server error" });
   }
-};
+}
 
 // Login admin — checks DB + bcrypt (via model.matchPassword)
-exports.loginAdmin = async (req, res) => {
+export async function loginAdmin(req, res) {
   try {
     const { username, password } = req.body;
-    if (!username || !password)
+    if (!username || !password) {
       return res.status(400).json({ message: "Username and password required" });
+    }
 
     const admin = await Admin.findOne({ username: username.trim() });
-    // Don’t reveal which field is wrong
-    if (!admin) return res.status(400).json({ message: "Invalid credentials" });
+    if (!admin) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const ok = await admin.matchPassword(password);
-    if (!ok) return res.status(400).json({ message: "Invalid credentials" });
+    if (!ok) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const token = jwt.sign(
       { id: admin._id, role: "admin", username: admin.username },
@@ -46,4 +57,4 @@ exports.loginAdmin = async (req, res) => {
     console.error("loginAdmin error:", error);
     return res.status(500).json({ message: "Server error" });
   }
-};
+}

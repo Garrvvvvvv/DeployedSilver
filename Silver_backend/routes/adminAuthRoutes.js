@@ -1,7 +1,8 @@
 // routes/adminAuthRoutes.js
-const express = require("express");
-const router = express.Router();
-const { registerAdmin, loginAdmin } = require("../controllers/adminAuthController");
+import { Router } from "express";
+import { registerAdmin, loginAdmin } from "../controllers/adminAuthController.js";
+
+const router = Router();
 
 // Optional: protect register with a setup key in env
 router.post("/register", (req, res, next) => {
@@ -18,4 +19,4 @@ router.post("/register", (req, res, next) => {
 // Strict login (DB + hashed password check)
 router.post("/login", loginAdmin);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,7 @@
-// models/Admin.js
-const mongoose = require("mongoose");
-const bcrypt = require("bcryptjs");
+// models/Admin.js   (ESM)
+
+import mongoose from "mongoose";
+import bcrypt from "bcryptjs";
 
 const adminSchema = new mongoose.Schema(
   {
@@ -21,4 +22,5 @@ adminSchema.methods.matchPassword = function (enteredPassword) {
   return bcrypt.compare(enteredPassword, this.password);
 };
 
-module.exports = mongoose.model("Admin", adminSchema);
+const Admin = mongoose.model("Admin", adminSchema);
+export default Admin;

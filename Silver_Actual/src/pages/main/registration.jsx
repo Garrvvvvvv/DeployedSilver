@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { api } from "../../lib/api"; // baseURL comes from VITE_API_BASE_URL
+import { apiUser } from "../../lib/apiUser"; // IMPORTANT: user api client
 
 const Registration = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,12 @@ const Registration = () => {
   const [errors, setErrors] = useState({});
   const [message, setMessage] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // LOGOUT USER
+  const handleLogout = () => {
+    localStorage.removeItem("app_auth");
+    window.location.href = "/login";
+  };
 
   // ✅ Form validation
   const validateForm = () => {
@@ -54,7 +60,7 @@ const Registration = () => {
     setMessage(null);
 
     try {
-      const res = await api.post(
+      const res = await apiUser.post(
         "/api/event/register",
         { ...formData },
         { headers: { "Content-Type": "application/json" } }
@@ -80,9 +86,16 @@ const Registration = () => {
   return (
     <div className="min-h-screen bg-[#1F1F1F] flex items-center justify-center p-4 pt-24">
       <div className="w-full max-w-2xl bg-[#292929] rounded-2xl shadow-2xl p-8">
-        <h2 className="text-3xl font-bold text-center text-white mb-8">
-          Event Registration
-        </h2>
+        
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-3xl font-bold text-white">Event Registration</h2>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm"
+          >
+            Logout
+          </button>
+        </div>
 
         {message && (
           <div

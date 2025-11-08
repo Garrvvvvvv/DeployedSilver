@@ -1,17 +1,18 @@
-// middleware/auth.js
-const jwt = require("jsonwebtoken");
+// middleware/auth.js  (ESM)
 
-module.exports = (req, res, next) => {
+import jwt from "jsonwebtoken";
+
+export default function (req, res, next) {
   try {
     const auth = req.headers.authorization || "";
     const [type, token] = auth.split(" ");
+
     if (type !== "Bearer" || !token) {
       return res.status(401).json({ message: "Not authorized" });
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // expose admin info for controllers if needed
     req.admin = {
       id: decoded.id,
       role: decoded.role || "admin",
@@ -19,7 +20,7 @@ module.exports = (req, res, next) => {
     };
 
     next();
-  } catch (error) {
+  } catch (_err) {
     return res.status(401).json({ message: "Invalid or expired token" });
   }
-};
+}

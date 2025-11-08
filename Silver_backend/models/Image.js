@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+// models/Image.js   (ESM)
+
+import mongoose from "mongoose";
 
 const imageSchema = new mongoose.Schema(
   {
@@ -10,10 +12,11 @@ const imageSchema = new mongoose.Schema(
       required: true
     }
   },
-  { timestamps: true } // gives createdAt + updatedAt
+  { timestamps: true }
 );
 
 // Sorting optimization
 imageSchema.index({ category: 1, createdAt: -1 });
 
-module.exports = mongoose.model("Image", imageSchema);
+const Image = mongoose.model("Image", imageSchema);
+export default Image;

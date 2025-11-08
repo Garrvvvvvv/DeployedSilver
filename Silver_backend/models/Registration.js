@@ -1,4 +1,6 @@
-const mongoose = require("mongoose");
+// models/Registration.js   (ESM)
+
+import mongoose from "mongoose";
 
 const registrationSchema = new mongoose.Schema(
   {
@@ -42,10 +44,11 @@ const registrationSchema = new mongoose.Schema(
       ]
     }
   },
-  { timestamps: true } // <-- auto createdAt + updatedAt
+  { timestamps: true }
 );
 
 // ensure unique email
 registrationSchema.index({ email: 1 }, { unique: true });
 
-module.exports = mongoose.model("Registration", registrationSchema);
+const Registration = mongoose.model("Registration", registrationSchema);
+export default Registration;

@@ -1,12 +1,20 @@
-require("dotenv").config({ path: "./.env" });
+// server.js (ESM)
 
-const express = require("express");
-const mongoose = require("mongoose");
-const cors = require("cors");
-const cookieParser = require("cookie-parser");
-const helmet = require("helmet");
-const compression = require("compression");
-const rateLimit = require("express-rate-limit"); // <- add
+import dotenv from "dotenv";
+dotenv.config({ path: "./.env" });
+
+import express from "express";
+import mongoose from "mongoose";
+import cors from "cors";
+import cookieParser from "cookie-parser";
+import helmet from "helmet";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
+
+import googleAuth from "./routes/googleAuth.js";
+import eventRoutes from "./routes/event.js";
+import adminAuthRoutes from "./routes/adminAuthRoutes.js";
+import adminImageRoutes from "./routes/adminImageRoutes.js";
 
 const app = express();
 
@@ -50,22 +58,19 @@ app.use(cookieParser());
 /* ---------- Rate limiters ---------- */
 // 5 attempts per 5 minutes; successful responses don't count
 const loginLimiter = rateLimit({
-  windowMs: 5 * 60 * 1000, // 5 minutes
-  max: 5,                  // limit each IP to 5 failed attempts per window
+  windowMs: 5 * 60 * 1000,
+  max: 5,
   standardHeaders: "draft-7",
   legacyHeaders: false,
-  skipSuccessfulRequests: true, // only count 4xx/5xx
+  skipSuccessfulRequests: true,
   message: { message: "Too many login attempts. Try again in 5 minutes." },
 });
 
-// apply to login route only
+// apply to admin login route only (before route registration)
 app.use("/api/admin/auth/login", loginLimiter);
 
 /* ---------- Routes ---------- */
-const eventRoutes = require("./routes/event");
-const adminAuthRoutes = require("./routes/adminAuthRoutes");
-const adminImageRoutes = require("./routes/adminImageRoutes");
-
+app.use("/api/auth", googleAuth);            // user Google auth
 app.use("/api/event", eventRoutes);
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/images", adminImageRoutes);
