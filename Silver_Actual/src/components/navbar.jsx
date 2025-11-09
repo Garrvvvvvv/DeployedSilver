@@ -12,6 +12,7 @@ import {
   Paper,
 } from '@mui/material';
 import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
 import { Link, useLocation } from 'react-router-dom';
 
 const pages = [
@@ -21,13 +22,42 @@ const pages = [
   { name: 'Registration', path: '/register' },
 ];
 
+// read user from localStorage
+function getAuthUser() {
+  try {
+    const raw = localStorage.getItem('app_auth');
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed?.user || null; // { name, email, picture }
+  } catch {
+    return null;
+  }
+}
+
 function ResponsiveAppBar() {
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [user, setUser] = React.useState(() => getAuthUser());
 
-  const toggleMobileMenu = () => {
-    setMobileOpen((prev) => !prev);
-  };
+  const toggleMobileMenu = () => setMobileOpen((prev) => !prev);
+
+  React.useEffect(() => {
+    const onStorage = (e) => {
+      if (e.key === 'app_auth') setUser(getAuthUser());
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  React.useEffect(() => {
+    setUser(getAuthUser());
+  }, [location.pathname]);
+
+  const firstName = user?.name ? user.name.split(' ')[0] : null;
+  const greeting = user ? `Welcome ${firstName}` : 'Welcome User';
+
+  // avatar logic
+  const avatarSrc = user?.picture || '';
+  const showDefaultIcon = !avatarSrc;
 
   return (
     <>
@@ -37,22 +67,46 @@ function ResponsiveAppBar() {
       >
         <Container maxWidth="xl">
           <Toolbar sx={{ justifyContent: 'space-between' }}>
-            {/* Left: Logo Text */}
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Avatar sx={{ bgcolor: 'grey', width: 40, height: 40, mr: 1 }} />
-              <Typography
+            {/* Left: Greeting + avatar */}
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
+              <Avatar
+                src={showDefaultIcon ? undefined : avatarSrc}
+                imgProps={{ referrerPolicy: 'no-referrer' }}
                 sx={{
-                  fontFamily: '"Inter", sans-serif',
-                  fontWeight: 600,
-                  fontSize: '1.5rem',
-                  color: '#e0e0e0',
-                  letterSpacing: '0.5px',
-                  textShadow: '0 1px 3px rgba(0,0,0,0.3)',
+                  width: 40,
+                  height: 40,
+                  bgcolor: showDefaultIcon ? 'transparent' : 'grey.800',
+                  border: '1px solid rgba(255,255,255,0.15)',
                 }}
               >
-                Silver Jubilee
-              </Typography>
+                {showDefaultIcon && (
+                  <AccountCircleRoundedIcon sx={{ fontSize: 36, color: 'rgba(255,255,255,0.85)' }} />
+                )}
+              </Avatar>
 
+              <Box sx={{ lineHeight: 1 }}>
+                <Typography
+                  sx={{
+                    fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                    fontWeight: 700,
+                    fontSize: { xs: '1rem', sm: '1.1rem' },
+                    color: '#f1f1f1',
+                    letterSpacing: '0.2px',
+                  }}
+                >
+                  {greeting}
+                </Typography>
+                <Typography
+                  sx={{
+                    fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                    fontWeight: 500,
+                    fontSize: '0.72rem',
+                    color: 'rgba(255,255,255,0.6)',
+                  }}
+                >
+                  {user ? 'You are signed in' : 'Please sign in to register'}
+                </Typography>
+              </Box>
             </Box>
 
             {/* Center Circle Logo (Desktop only) */}
@@ -76,12 +130,11 @@ function ResponsiveAppBar() {
                 sx={{
                   width: 80,
                   height: 80,
-                  transition: 'transform 0.2s ease-in-out', // Smooth transition for scaling
-                  '&:hover': {
-                    transform: 'scale(1.05)', // Scale to 110% on hover
-                  },
+                  transition: 'transform 0.2s ease-in-out',
+                  '&:hover': { transform: 'scale(1.05)' },
                 }}
-              />            </Box>
+              />
+            </Box>
 
             {/* Desktop Menu */}
             <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 2 }}>
@@ -90,14 +143,13 @@ function ResponsiveAppBar() {
                   <Button
                     sx={{
                       color: 'white',
-                      fontWeight: location.pathname === page.path ? 'bold' : 'normal',
+                      fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                      fontWeight: location.pathname === page.path ? 700 : 500,
                       borderBottom:
                         location.pathname === page.path ? '2px solid #ff6b6b' : 'none',
                       borderRadius: 0,
                       px: 1,
-                      '&:hover': {
-                        borderBottom: '2px solid #ff6b6b',
-                      },
+                      '&:hover': { borderBottom: '2px solid #ff6b6b' },
                     }}
                   >
                     {page.name}
@@ -118,13 +170,7 @@ function ResponsiveAppBar() {
       </AppBar>
 
       {/* Mobile Dropdown Menu */}
-      <Collapse
-        in={mobileOpen}
-        timeout={300}
-        sx={{
-          transition: 'height 300ms ease-in-out',
-        }}
-      >
+      <Collapse in={mobileOpen} timeout={300} sx={{ transition: 'height 300ms ease-in-out' }}>
         <Paper
           elevation={0}
           sx={{
@@ -154,14 +200,13 @@ function ResponsiveAppBar() {
                 fullWidth
                 sx={{
                   color: 'white',
-                  fontWeight: location.pathname === page.path ? 'bold' : 'normal',
+                  fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                  fontWeight: location.pathname === page.path ? 700 : 500,
                   borderBottom:
                     location.pathname === page.path ? '2px solid #ff6b6b' : 'none',
                   borderRadius: 0,
                   py: 1.2,
-                  '&:hover': {
-                    backgroundColor: 'rgba(255,255,255,0.1)',
-                  },
+                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
                 }}
               >
                 {page.name}
@@ -175,3 +220,4 @@ function ResponsiveAppBar() {
 }
 
 export default ResponsiveAppBar;
+  
