@@ -266,6 +266,28 @@ export default function Registration() {
     }
   };
 
+  /* ----- UPI copy helpers ----- */
+  const UPI_ID = "Getepay.mbandhan118166";
+  const [copiedUpi, setCopiedUpi] = useState(false);
+  const handleCopyUpi = async () => {
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(UPI_ID);
+      } else {
+        const ta = document.createElement("textarea");
+        ta.value = UPI_ID;
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand("copy");
+        document.body.removeChild(ta);
+      }
+      setCopiedUpi(true);
+      setTimeout(() => setCopiedUpi(false), 1200);
+    } catch {
+      toast.error("Could not copy UPI ID");
+    }
+  };
+
   const LoginCallout = () => (
     <div className="mb-6 bg-yellow-500/10 border border-yellow-500/40 text-yellow-200 px-4 py-3 rounded-xl">
       <p className="font-semibold">You’re not logged in</p>
@@ -467,22 +489,7 @@ export default function Registration() {
         </div>
 
         {/* UPI card */}
-        <div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/5">
-          <p className="text-white font-semibold mb-2">Pay via UPI</p>
-          <div className="flex items-center gap-4">
-            <img
-              src="/assets/upi-qr.png"
-              alt="UPI QR"
-              className="w-28 h-28 rounded-lg border border-white/10 object-contain bg-white"
-            />
-            <div className="text-white/80 text-sm">
-              <p><span className="text-white/60">UPI ID:</span> your-upi-id@okbank</p>
-              <p><span className="text-white/60">Base Fee:</span> ₹{BASE_PRICE.toLocaleString("en-IN")} (Alone)</p>
-              <p><span className="text-white/60">Add-on:</span> ₹{ADDON_PRICE.toLocaleString("en-IN")} per additional person</p>
-            </div>
-          </div>
-        </div>
-
+      
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block mb-2 text-gray-300">Name</label>
@@ -615,6 +622,50 @@ export default function Registration() {
               ₹{totalAmount.toLocaleString("en-IN")}
             </p>
           </div>
+         {/* UPI card (responsive) */}
+<div className="mb-6 p-4 rounded-xl border border-white/10 bg-white/5">
+  <p className="text-white font-semibold mb-3">Pay via UPI</p>
+
+  <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6">
+    <div className="flex justify-center sm:block">
+      <img
+        src="../../assets/QR.jpg"
+        alt="UPI QR"
+        className="w-28 h-28 sm:w-32 sm:h-32 rounded-lg border border-white/10 object-contain bg-white shrink-0"
+      />
+    </div>
+
+    <div className="text-white/80 text-sm flex-1 min-w-0">
+      {/* UPI line */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span className="text-white/60 whitespace-nowrap">UPI ID:</span>
+        <span className="font-medium break-all">{UPI_ID}</span>
+        <button
+          type="button"
+          onClick={handleCopyUpi}
+          className="ml-1 inline-flex items-center rounded px-2 py-[2px] text-[11px]
+                     border border-white/15 bg-white/10 hover:bg-white/15 text-white/90 transition"
+          aria-label="Copy UPI ID"
+          title="Copy UPI ID"
+        >
+          {copiedUpi ? "Copied!" : "Copy"}
+        </button>
+      </div>
+
+      {/* Prices */}
+      <p className="mt-2">
+        <span className="text-white/60">Base Fee:</span>{" "}
+        ₹{BASE_PRICE.toLocaleString("en-IN")} (Alone)
+      </p>
+      <p>
+        <span className="text-white/60">Add-on:</span>{" "}
+        ₹{ADDON_PRICE.toLocaleString("en-IN")} per additional person
+      </p>
+    </div>
+  </div>
+</div>
+
+
 
           <div>
             <label className="block mb-2 text-gray-300">Upload Payment Receipt (image)</label>
