@@ -5,6 +5,15 @@ import { OAuth2Client } from "google-auth-library";
 const router = Router();
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
+// routes/googleAuth.js (add)
+router.get("/me", (req, res) => {
+  // depends on your auth; example if you put user in req.user
+  if (!req.user) return res.status(200).json({});
+  const { sub, email, name, picture } = req.user;
+  res.json({ sub, email, name, picture });
+});
+
+
 router.post("/google", async (req, res) => {
   try {
     const { id_token } = req.body;

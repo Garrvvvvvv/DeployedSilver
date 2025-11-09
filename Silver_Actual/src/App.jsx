@@ -14,20 +14,20 @@ import Footer from './components/footer.jsx';
 import UserLogin from './pages/main/userlogin';
 import UserProtectedRoute from './components/UserProtectedRoutes';
 
-// ADMIN auth (existing)
+// ADMIN
 import Login from './pages/Admin/Login.jsx';
 import Dashboard from './pages/Admin/Dashboard.jsx';
 import HomeManager from './pages/Admin/HomeManager.jsx';
 import AdminMemories from './pages/Admin/AdminMemories.jsx';
+import AdminRegistrations from './pages/Admin/Adminregisterations';
 import AdminSidebar from './components/AdminSidebar.jsx';
 import AdminProtectedRoute from './components/ProtectedRoute.jsx';
 
-// Admin layout wrapper
 function AdminLayout({ children }) {
   return (
     <div className="flex min-h-screen bg-gray-50">
       <AdminSidebar />
-      <div className="flex-1 p-4">{children}</div>
+      <div className="flex-1 p-4 bg-gray-950 text-white">{children}</div>
     </div>
   );
 }
@@ -37,7 +37,6 @@ function App() {
 
   return (
     <>
-      {/* 🌐 Main Website */}
       <ResponsiveAppBar />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -45,49 +44,37 @@ function App() {
         <Route path="/eventFlow" element={<EventFlow />} />
         <Route path="/meetourteam" element={<Meetourteam />} />
 
-        {/* USER auth */}
+        {/* USER */}
         <Route path="/login" element={<UserLogin />} />
-        <Route
-          path="/register"
-          element={
-            <UserProtectedRoute>
-              <Registration />
-            </UserProtectedRoute>
-          }
-        />
+        <Route path="/register" element={
+          <UserProtectedRoute>
+            <Registration />
+          </UserProtectedRoute>
+        } />
 
-        {/* 🛠 Admin Panel Routes */}
+        {/* ADMIN */}
         <Route path="/admin/login" element={<Login />} />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <Dashboard />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/home"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <HomeManager />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
-        />
-        <Route
-          path="/admin/memories"
-          element={
-            <AdminProtectedRoute>
-              <AdminLayout>
-                <AdminMemories />
-              </AdminLayout>
-            </AdminProtectedRoute>
-          }
-        />
+        <Route path="/admin/dashboard" element={
+          <AdminProtectedRoute>
+            <AdminLayout><Dashboard /></AdminLayout>
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/home" element={
+          <AdminProtectedRoute>
+            <AdminLayout><HomeManager /></AdminLayout>
+          </AdminProtectedRoute>
+        } />
+        <Route path="/admin/memories" element={
+          <AdminProtectedRoute>
+            <AdminLayout><AdminMemories /></AdminLayout>
+          </AdminProtectedRoute>
+        } />
+        {/* NEW */}
+        <Route path="/admin/registrations" element={
+          <AdminProtectedRoute>
+            <AdminLayout><AdminRegistrations /></AdminLayout>
+          </AdminProtectedRoute>
+        } />
       </Routes>
       <Footer />
     </>

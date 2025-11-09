@@ -2,7 +2,22 @@
 
 import mongoose from "mongoose";
 
-const registrationSchema = new mongoose.Schema(
+const { Schema, model } = mongoose;
+
+const FamilyMemberSchema = new Schema(
+  {
+    name: { type: String, required: true, trim: true },
+    relation: {
+      type: String,
+      required: true,
+      trim: true,
+      enum: ["Spouse", "Son", "Daughter", "Other"],
+    },
+  },
+  { _id: false }
+);
+
+const registrationSchema = new Schema(
   {
     // Google account identifiers (from JWT)
     oauthEmail: {
@@ -12,12 +27,15 @@ const registrationSchema = new mongoose.Schema(
       lowercase: true,
     },
     oauthUid: {
-      type: String, // Google's "sub" in our JWT as uid
+      // Google's "sub" (stable user id)
+      type: String,
       required: true,
       trim: true,
+      unique: true, // enforce one-time registration per Google account
+      index: true,
     },
 
-    // Existing fields (user-typed)
+    // User-typed fields
     name: { type: String, required: true, trim: true },
     batch: {
       type: String,
@@ -40,10 +58,10 @@ const registrationSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
-      unique: true,
       trim: true,
       lowercase: true,
       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email address"],
+      // Not unique: multiple users can share a non-Google email, and we enforce uniqueness via oauthUid instead.
     },
     linkedin: {
       type: String,
@@ -53,13 +71,45 @@ const registrationSchema = new mongoose.Schema(
         "Please provide a valid LinkedIn profile URL",
       ],
     },
+
+    // Family & pricing
+    comingWithFamily: { type: Boolean, default: false },
+    familyMembers: { type: [FamilyMemberSchema], default: [] },
+    amount: { type: Number, required: true, min: 0 }, // ₹10000 alone + ₹5000 per family member
+
+    // Payment proof
+    receiptUrl: { type: String, trim: true }, // URL to uploaded receipt image
+    paymentRef: { type: String, trim: true }, // optional: UTR/transaction id
+
+    // Approval / moderation
+    status: {
+      type: String,
+      enum: ["PENDING", "APPROVED", "REJECTED"],
+      default: "PENDING",
+      index: true,
+    },
+    approvedAt: { type: Date },
+    approvedBy: { type: String, trim: true }, // store admin id/email who approved
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
 );
 
-// Indexes
-registrationSchema.index({ email: 1 }, { unique: true });
-registrationSchema.index({ oauthUid: 1 }); // helpful for querying per user
+// Virtuals
+registrationSchema.virtual("familyCount").get(function () {
+  return Array.isArray(this.familyMembers) ? this.familyMembers.length : 0;
+});
 
-const Registration = mongoose.model("Registration", registrationSchema);
+// Helpful indexes
+registrationSchema.index({ createdAt: -1 });
+registrationSchema.index({ oauthEmail: 1 });
+registrationSchema.index({ status: 1 });
+
+// NOTE: email is intentionally NOT unique now.
+// We rely on oauthUid's unique index for single registration per Google account.
+
+const Registration = model("Registration", registrationSchema);
 export default Registration;
