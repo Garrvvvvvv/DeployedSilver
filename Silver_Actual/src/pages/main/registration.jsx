@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 /* ---------- Config ---------- */
 const BASE_PRICE = 10000;
 const ADDON_PRICE = 5000;
+const ALLOWED_BATCH = "2000";
 
 /* ---------- Helper: normalize Google user ---------- */
 function normalizeGoogleUser(anyUser) {
@@ -24,7 +25,7 @@ function normalizeGoogleUser(anyUser) {
 const apiBase = (import.meta.env?.VITE_API_BASE_URL || "").replace(/\/+$/, "");
 const toPublicUrl = (u) => {
   if (!u) return "";
-  if (/^https?:\/\//i.test(u)) return u; // already absolute
+  if (/^https?:\/\//i.test(u)) return u;
   return `${apiBase}${u.startsWith("/") ? u : `/${u}`}`;
 };
 
@@ -37,10 +38,9 @@ export default function Registration() {
 
   const [formData, setFormData] = useState({
     name: googleProfile?.name || "",
-    batch: "",
+    batch: ALLOWED_BATCH, // locked
     contact: "",
     email: googleProfile?.email || "",
-    linkedin: "",
     comingWithFamily: false,
     familyMembers: [],
     receiptFile: null,
@@ -48,7 +48,7 @@ export default function Registration() {
 
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);   // block form until we check server
+  const [isChecking, setIsChecking] = useState(true);
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
   const totalAmount = useMemo(() => {
@@ -57,7 +57,6 @@ export default function Registration() {
     return BASE_PRICE + ADDON_PRICE * n;
   }, [formData.comingWithFamily, formData.familyMembers]);
 
-  /* ---------- Robust fetch: header first, fallback to query param ---------- */
   const fetchExisting = useCallback(async (sub) => {
     if (!sub) return;
     try {
@@ -76,7 +75,6 @@ export default function Registration() {
         setServerRecord(null);
         localStorage.removeItem("registration_uid");
       } else {
-        // Fallback: no custom headers
         try {
           const res2 = await apiUser.get("/api/event/registration/me", {
             params: { oauthUid: sub },
@@ -97,7 +95,6 @@ export default function Registration() {
     }
   }, []);
 
-  /* ---------- Resolve identity (from app_auth or /api/auth/me) ---------- */
   useEffect(() => {
     let stopped = false;
     (async () => {
@@ -111,6 +108,7 @@ export default function Registration() {
             ...prev,
             name: prev.name || me.name || "",
             email: prev.email || me.email || "",
+            batch: ALLOWED_BATCH,
           }));
         }
       } finally {
@@ -120,17 +118,14 @@ export default function Registration() {
     return () => {
       stopped = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, []); // eslint-disable-line
 
-  /* ---------- Check existing registration when identity is known ---------- */
   useEffect(() => {
     if (!googleProfile?.sub) return;
     setIsChecking(true);
     fetchExisting(googleProfile.sub);
   }, [googleProfile?.sub, fetchExisting]);
 
-  /* ---------- Fast-path using cached uid ---------- */
   useEffect(() => {
     const cached = localStorage.getItem("registration_uid");
     if (cached && googleProfile?.sub && cached === googleProfile.sub) {
@@ -139,7 +134,6 @@ export default function Registration() {
     }
   }, [googleProfile?.sub, fetchExisting]);
 
-  /* ---------- Refetch when tab becomes visible ---------- */
   useEffect(() => {
     const onVis = () => {
       if (document.visibilityState === "visible" && googleProfile?.sub) {
@@ -153,18 +147,22 @@ export default function Registration() {
 
   const handleLogout = () => {
     localStorage.removeItem("app_auth");
-    // keep registration_uid so we still fast-path to summary after re-login
     window.location.href = "/login";
   };
 
-  /* ---------- Validation & Handlers ---------- */
   const validateForm = () => {
     const newErrors = {};
     if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.batch.trim()) newErrors.batch = "Batch is required";
+
+    // Batch must be 2000
+    if (String(formData.batch) !== ALLOWED_BATCH) {
+      newErrors.batch = `This event is only for batch ${ALLOWED_BATCH}`;
+    }
+
     const phoneRe = /^[0-9]{10}$/;
     if (!formData.contact.trim()) newErrors.contact = "Contact number is required";
     else if (!phoneRe.test(formData.contact)) newErrors.contact = "Invalid contact number";
+
     const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!formData.email.trim()) newErrors.email = "Email is required";
     else if (!emailRe.test(formData.email)) newErrors.email = "Invalid email address";
@@ -200,6 +198,8 @@ export default function Registration() {
       setErrors((prev) => ({ ...prev, receiptFile: undefined }));
       return;
     }
+    // Batch is locked; prevent manual edits just in case
+    if (name === "batch") return;
     setFormData((s) => ({ ...s, [name]: value }));
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
@@ -241,13 +241,12 @@ export default function Registration() {
       fd.append("oauthUid", me.sub);
       fd.append("oauthEmail", me.email);
       fd.append("name", formData.name);
-      fd.append("batch", formData.batch);
+      fd.append("batch", ALLOWED_BATCH); // enforce on submit
       fd.append("contact", formData.contact);
       fd.append("email", formData.email || me.email);
-      fd.append("linkedin", formData.linkedin);
       fd.append("comingWithFamily", String(formData.comingWithFamily));
       fd.append("familyMembers", JSON.stringify(formData.familyMembers || []));
-      fd.append("amount", "0"); // server recomputes securely
+      fd.append("amount", "0");
       if (formData.receiptFile) fd.append("receipt", formData.receiptFile);
 
       const userToken = auth?.token;
@@ -267,7 +266,6 @@ export default function Registration() {
     }
   };
 
-  /* ---------- Small UI helpers ---------- */
   const LoginCallout = () => (
     <div className="mb-6 bg-yellow-500/10 border border-yellow-500/40 text-yellow-200 px-4 py-3 rounded-xl">
       <p className="font-semibold">You’re not logged in</p>
@@ -286,7 +284,6 @@ export default function Registration() {
       </div>
     ) : null;
 
-  /* ---------- Rendering gates ---------- */
   if (isLoadingAuth) {
     return (
       <div className="min-h-screen bg-[#1F1F1F] flex items-center justify-center p-4 pt-24">
@@ -331,12 +328,23 @@ export default function Registration() {
           <div className="w-full max-w-2xl bg-[#292929] rounded-2xl shadow-2xl p-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-3xl font-bold text-white">Your Registration</h2>
-              <button
-                onClick={handleLogout}
-                className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm"
-              >
-                Logout
-              </button>
+              <div className="flex items-center gap-3">
+                {r.status === "APPROVED" && String(r.batch) === ALLOWED_BATCH && (
+                  <a
+                    href="/room-allocation"
+                    className="px-4 py-2 bg-white/10 hover:bg-white/20 text-white rounded-lg text-sm"
+                    title="Room allocation will open soon"
+                  >
+                    Room Allocation
+                  </a>
+                )}
+                <button
+                  onClick={handleLogout}
+                  className="px-4 py-2 bg-red-600 hover:bg-red-500 text-white rounded-lg text-sm"
+                >
+                  Logout
+                </button>
+              </div>
             </div>
 
             <div className="flex items-center gap-3 mb-6 rounded-xl border border-white/10 bg-white/5 p-3">
@@ -372,10 +380,9 @@ export default function Registration() {
 
             <div className="space-y-3 text-white/90">
               <p><span className="text-white/60">Name:</span> {r.name}</p>
-              <p><span className="text-white/60">Batch:</span> {r.batch}</p>
+              <p><span className="text-white/60">Batch:</span> {r.batch} (event is for {ALLOWED_BATCH})</p>
               <p><span className="text-white/60">Contact:</span> {r.contact}</p>
               <p><span className="text-white/60">Email:</span> {r.email}</p>
-              {r.linkedin && <p><span className="text-white/60">LinkedIn:</span> {r.linkedin}</p>}
               <p><span className="text-white/60">Attending:</span> {r.comingWithFamily ? "With Family" : "Alone"}</p>
               {r.comingWithFamily && (
                 <div>
@@ -491,18 +498,19 @@ export default function Registration() {
             {errors.name && <p className="text-red-400 mt-1">{errors.name}</p>}
           </div>
 
+          {/* Batch locked to 2000 */}
           <div>
             <label className="block mb-2 text-gray-300">Batch</label>
             <input
               type="text"
               name="batch"
-              value={formData.batch}
-              onChange={handleChange}
-              placeholder="e.g., 2022"
-              className={`w-full p-3 rounded-lg bg-[#333333] text-white focus:outline-none ${
-                errors.batch ? "border border-red-500" : "border border-[#444444]"
+              value={ALLOWED_BATCH}
+              readOnly
+              className={`w-full p-3 rounded-lg bg-[#2e2e2e] text-white border ${
+                errors.batch ? "border-red-500" : "border-[#444444]"
               }`}
             />
+            <p className="text-white/50 text-xs mt-1">This event is only for batch {ALLOWED_BATCH}.</p>
             {errors.batch && <p className="text-red-400 mt-1">{errors.batch}</p>}
           </div>
 
@@ -536,18 +544,6 @@ export default function Registration() {
               />
               {errors.email && <p className="text-red-400 mt-1">{errors.email}</p>}
             </div>
-          </div>
-
-          <div>
-            <label className="block mb-2 text-gray-300">LinkedIn URL</label>
-            <input
-              type="url"
-              name="linkedin"
-              value={formData.linkedin}
-              onChange={handleChange}
-              placeholder="https://linkedin.com/in/username"
-              className="w-full p-3 rounded-lg bg-[#333333] text-white border border-[#444444] focus:outline-none"
-            />
           </div>
 
           <div className="flex items-center gap-3">
