@@ -9,8 +9,8 @@ const imageSchema = new mongoose.Schema(
     category: {
       type: String,
       enum: ["home_announcement", "home_memories", "memories_page"],
-      required: true
-    }
+      required: true,
+    },
   },
   { timestamps: true }
 );

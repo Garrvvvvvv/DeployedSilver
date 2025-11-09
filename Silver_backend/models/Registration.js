@@ -31,8 +31,8 @@ const registrationSchema = new Schema(
       type: String,
       required: true,
       trim: true,
-      unique: true, // enforce one-time registration per Google account
-      index: true,
+      unique: true, // enforce one-time registration per Google account (unique index is created automatically)
+      // removed: index: true (redundant with unique)
     },
 
     // User-typed fields
@@ -42,11 +42,12 @@ const registrationSchema = new Schema(
       required: true,
       trim: true,
       validate: {
-        validator: function (v) {
+        validator(v) {
           const year = Number(v);
           return year >= 1956 && year <= 2028;
         },
-        message: (props) => `${props.value} is not a valid batch year (1956 — 2028)`,
+        message: (props) =>
+          `${props.value} is not a valid batch year (1956 — 2028)`,
       },
     },
     contact: {
@@ -86,7 +87,7 @@ const registrationSchema = new Schema(
       type: String,
       enum: ["PENDING", "APPROVED", "REJECTED"],
       default: "PENDING",
-      index: true,
+      // removed: index: true (we keep the schema-level index below)
     },
     approvedAt: { type: Date },
     approvedBy: { type: String, trim: true }, // store admin id/email who approved
@@ -106,9 +107,9 @@ registrationSchema.virtual("familyCount").get(function () {
 // Helpful indexes
 registrationSchema.index({ createdAt: -1 });
 registrationSchema.index({ oauthEmail: 1 });
-registrationSchema.index({ status: 1 });
+registrationSchema.index({ status: 1 }); // single source of truth for status index
 
-// NOTE: email is intentionally NOT unique now.
+// NOTE: email is intentionally NOT unique.
 // We rely on oauthUid's unique index for single registration per Google account.
 
 const Registration = model("Registration", registrationSchema);
