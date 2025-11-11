@@ -8,17 +8,15 @@ function App() {
       name: 'Ms.Mansi Bhargava',
       position: 'Head Of Alumni Relations',
       photo:
-        'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=400',
-      linkedin: 'https://linkedin.com/in/mansibhargava',
-      github: 'https://github.com/mansibhargava',
+        ' https://res.cloudinary.com/dbl2so7ff/image/upload/v1762841017/mansi_akgkm7.jpg',
+      linkedin: 'https://www.linkedin.com/in/thapar-alumni-relations-office/',
     },
     {
       name: 'Ms.Deepika',
       position: 'Senior Associate',
       photo:
-        'https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&w=400',
-      linkedin: 'https://linkedin.com/in/deepika',
-      github: 'https://github.com/deepika',
+        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762841222/deepika_z5i7st.jpg',
+      linkedin: 'https://www.linkedin.com/in/thapar-alumni-relations-office/',
     },
   ];
 
@@ -27,24 +25,24 @@ function App() {
       name: 'Anmol Sethi',
       position: 'President',
       photo:
-        'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=400',
-      linkedin: 'https://linkedin.com/in/kushalpreetsallan',
+        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762846085/anmolllllllll_ctrskb.jpg',
+      linkedin: 'https://www.linkedin.com/in/anmol-sethi-79ba03228/',
       github: 'https://github.com/kushalpreetsallan',
     },
     {
       name: 'Kushagrh Rohilla',
       position: 'Executive Head',
       photo:
-        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762807236/1000067742-removebg-preview_waifu2x_art_noise1_-_KUSHAGRH_ROHILLA_gl8wud.png',
-      linkedin: 'https://linkedin.com/in/madhavmahajan',
-      github: 'https://github.com/madhavmahajan',
+        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762841870/jatta_ka_chora_sicgc6.jpg',
+      linkedin: 'https://www.linkedin.com/in/kushagrhrohilla/',
+      github: 'https://github.com/Infurnux',
     },
     {
       name: 'Angad Bir Singh',
       position: 'Executive Head',
       photo:
-        'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=400',
-      linkedin: 'https://linkedin.com/in/jatinsharma',
+        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762846364/angad_ckdszm.jpg',
+      linkedin: 'https://www.linkedin.com/in/angad-bir-singh-45507a281/',
       github: 'https://github.com/jatinsharma',
     },
     {
@@ -52,8 +50,8 @@ function App() {
       position: 'Outreach and Communication Head',
       photo:
         'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762807072/me_-_RAKSHIT_DHAMIJA_hk2ruf.jpg',
-      linkedin: 'https://linkedin.com/in/jatinsharma',
-      github: 'https://github.com/jatinsharma',
+      linkedin: 'https://www.linkedin.com/in/rakshit-dhamija-870b39286/',
+      github: 'https://github.com/Rakshit-Dhamija',
     },
   ];
 
@@ -66,7 +64,7 @@ function App() {
           name: 'Garv Noor Sandha',
           position: 'Tech Lead',
           photo:
-            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762805156/Profile_LINK_vq6kdk.jpg',
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762839758/Profile_LINK_x49mdb.jpg',
           linkedin: 'https://linkedin.com/in/garvnoorsandha',
           github: 'https://github.com/garvnoorsandha',
         },
@@ -80,9 +78,17 @@ function App() {
           name: 'Vani Sinha',
           position: 'Design Lead',
           photo:
-            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762805856/WhatsApp_Image_2025-11-10_at_13.27.59_9478b9d9_-_vani_sinha_s5toac.jpg',
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762840620/vani_mjtrdb.jpg',
           linkedin: 'https://www.linkedin.com/in/vani-sinha-41988a335/',
           github: 'https://github.com/vanii04',
+        },
+        {
+          name: 'Anjali Kumari',
+          position: 'Design Lead',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762842494/anjali_kqya84.jpg',
+          linkedin: 'https://www.linkedin.com/in/anjali-kumari-aa7668323/',
+          github: 'https://github.com/Anjalikumari990',
         },
         {
           name: 'Aarushi Pulugurty',
@@ -94,7 +100,7 @@ function App() {
         },
         {
           name: 'Dishita Bansal',
-          position: 'Lead',
+          position: 'Design Lead',
           photo:
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762806636/WhatsApp_Image_2025-08-25_at_12.22.32_PM_2_-_Dishita_Bansal_wu2ewx.jpg',
           linkedin: 'https://www.linkedin.com/in/dishita-bansal/',
@@ -121,6 +127,25 @@ function App() {
           linkedin: 'https://www.linkedin.com/in/anmol-mittal-75506337b',
           github: 'https://github.com/CoderAnmolMittal',
         },
+        {
+          name: 'Prisha Bharti ',
+          position: 'Media Lead',
+          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762843678/prisha_yhh7lh.jpg',
+          linkedin: 'https://www.linkedin.com/in/prisha-bharti-8527b02b9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+        },
+        {
+          name: 'Ansh Bansal',
+          position: 'Media Lead',
+          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762842283/ansh_vna422.jpg',
+          linkedin: 'https://www.linkedin.com/in/anshbansal1002/',
+          github: 'https://github.com/CoderAnmolMittal',
+        },
+        {
+          name: 'Siya Garg',
+          position: 'Media Lead',
+          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762845896/Siya_gnlt2o.jpg',
+          linkedin: 'https://www.linkedin.com/in/siya-garg-b954a322b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
+        },
       ],
     },
     {
@@ -140,9 +165,25 @@ function App() {
           name: 'Harshil Jain',
           position: 'Content Lead',
           photo:
-            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762805857/Harshil_Jain_lkeqzv.jpg',
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762840753/harshil123_rlybmj.png',
           linkedin: 'https://www.linkedin.com/in/harshil-jain-13a87731a',
           github: 'https://github.com/jainharshil34',
+        },
+        {
+          name: 'Ayushi Kaushal',
+          position: 'Content Lead',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762841628/ayushi_jc8dul.jpg',
+          linkedin: 'https://www.linkedin.com/in/ayushi-kaushal',
+          github: 'https://github.com/AyushiK16',
+        },
+        {
+          name: 'Tishya Pandey',
+          position: 'Content Lead',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762843363/tisha_gudtwu.jpg',
+          linkedin: 'https://www.linkedin.com/in/ayushi-kaushal',
+          github: 'https://github.com/AyushiK16',
         },
       ],
     },
