@@ -27,7 +27,6 @@ function App() {
       photo:
         'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762846085/anmolllllllll_ctrskb.jpg',
       linkedin: 'https://www.linkedin.com/in/anmol-sethi-79ba03228/',
-      github: 'https://github.com/kushalpreetsallan',
     },
     {
       name: 'Kushagrh Rohilla',
@@ -41,7 +40,7 @@ function App() {
       name: 'Angad Bir Singh',
       position: 'Executive Head',
       photo:
-        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762846364/angad_ckdszm.jpg',
+        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762860088/anagdd_rc4vc6.jpg',
       linkedin: 'https://www.linkedin.com/in/angad-bir-singh-45507a281/',
       github: 'https://github.com/jatinsharma',
     },
@@ -65,8 +64,9 @@ function App() {
           position: 'Tech Lead',
           photo:
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762839758/Profile_LINK_x49mdb.jpg',
-          linkedin: 'https://linkedin.com/in/garvnoorsandha',
-          github: 'https://github.com/garvnoorsandha',
+          linkedin: 'https://www.linkedin.com/in/garvsandha/',
+          github: 'https://github.com/Garrvvvvvv',
+         
         },
       ],
     },
@@ -118,7 +118,6 @@ function App() {
           photo:
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762806538/IMG_1956_-_Agami_1_tqrpmx.jpg',
           linkedin: 'https://www.linkedin.com/in/agami-garg-608692308/',
-          github: 'https://github.com/agamigarg',
         },
         {
           name: 'Anmol Mittal',
@@ -159,7 +158,6 @@ function App() {
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762806927/PArnika_zmozxm.jpg',
           linkedin:
             'https://www.linkedin.com/in/parnika-bharadvaja-14029b343?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
-          github: '',
         },
         {
           name: 'Harshil Jain',
@@ -182,8 +180,7 @@ function App() {
           position: 'Content Lead',
           photo:
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762843363/tisha_gudtwu.jpg',
-          linkedin: 'https://www.linkedin.com/in/ayushi-kaushal',
-          github: 'https://github.com/AyushiK16',
+          linkedin: 'https://www.linkedin.com/in/tishya-pandey-327155363?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
         },
       ],
     },
@@ -198,15 +195,16 @@ function App() {
       <div className="relative">
         {/* Reduced header height & font sizes */}
         <header className="text-center py-8 px-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
+        
+          <h1 className="mt-3 mb-3 text-4xl md:text-4xl font-bold text-white tracking-tight">
+            Our Team
+          </h1>
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
             <Users className="w-4 h-4 text-white/90" />
             <span className="text-xs font-medium text-white/80">
               Alumni Relations Cell
             </span>
           </div>
-          <h1 className="mt-3 text-3xl md:text-4xl font-bold text-white tracking-tight">
-            Our Team
-          </h1>
         </header>
 
         <section className="max-w-7xl mx-auto px-4 py-10">
