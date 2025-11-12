@@ -8,7 +8,7 @@ function App() {
       name: 'Ms.Mansi Bhargava',
       position: 'Head Of Alumni Relations',
       photo:
-        ' https://res.cloudinary.com/dbl2so7ff/image/upload/v1762841017/mansi_akgkm7.jpg',
+        'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762841017/mansi_akgkm7.jpg',
       linkedin: 'https://www.linkedin.com/in/thapar-alumni-relations-office/',
     },
     {
@@ -66,7 +66,6 @@ function App() {
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762839758/Profile_LINK_x49mdb.jpg',
           linkedin: 'https://www.linkedin.com/in/garvsandha/',
           github: 'https://github.com/Garrvvvvvv',
-         
         },
       ],
     },
@@ -122,28 +121,34 @@ function App() {
         {
           name: 'Anmol Mittal',
           position: 'Media Lead',
-          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762805858/Anmol_Mittal_it9ct9.jpg',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762805858/Anmol_Mittal_it9ct9.jpg',
           linkedin: 'https://www.linkedin.com/in/anmol-mittal-75506337b',
           github: 'https://github.com/CoderAnmolMittal',
         },
         {
           name: 'Prisha Bharti ',
           position: 'Media Lead',
-          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762843678/prisha_yhh7lh.jpg',
-          linkedin: 'https://www.linkedin.com/in/prisha-bharti-8527b02b9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762843678/prisha_yhh7lh.jpg',
+          linkedin:
+            'https://www.linkedin.com/in/prisha-bharti-8527b02b9?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
         },
         {
           name: 'Ansh Bansal',
           position: 'Media Lead',
-          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762842283/ansh_vna422.jpg',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762842283/ansh_vna422.jpg',
           linkedin: 'https://www.linkedin.com/in/anshbansal1002/',
           github: 'https://github.com/CoderAnmolMittal',
         },
         {
           name: 'Siya Garg',
           position: 'Media Lead',
-          photo:'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762845896/Siya_gnlt2o.jpg',
-          linkedin: 'https://www.linkedin.com/in/siya-garg-b954a322b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
+          photo:
+            'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762845896/Siya_gnlt2o.jpg',
+          linkedin:
+            'https://www.linkedin.com/in/siya-garg-b954a322b?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app',
         },
       ],
     },
@@ -180,7 +185,8 @@ function App() {
           position: 'Content Lead',
           photo:
             'https://res.cloudinary.com/dbl2so7ff/image/upload/v1762843363/tisha_gudtwu.jpg',
-          linkedin: 'https://www.linkedin.com/in/tishya-pandey-327155363?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
+          linkedin:
+            'https://www.linkedin.com/in/tishya-pandey-327155363?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app',
         },
       ],
     },
@@ -193,13 +199,11 @@ function App() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_80%_85%,rgba(139,92,246,0.08),transparent_60%)]" />
 
       <div className="relative">
-        {/* Reduced header height & font sizes */}
         <header className="text-center py-8 px-4">
-        
           <h1 className="mt-3 mb-3 text-4xl md:text-4xl font-bold text-white tracking-tight">
             Our Team
           </h1>
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
+          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10">
             <Users className="w-4 h-4 text-white/90" />
             <span className="text-xs font-medium text-white/80">
               Alumni Relations Cell
@@ -207,7 +211,7 @@ function App() {
           </div>
         </header>
 
-        <section className="max-w-7xl mx-auto px-4 py-10">
+        <section className="max-w-7xl mx-auto px-4 py-1">
           {/* Faculty Heads */}
           <div className="text-center mb-8">
             <h2 className="text-xl md:text-2xl font-semibold text-white">
@@ -242,10 +246,27 @@ function App() {
               Departments
             </h2>
           </div>
-          <div className="space-y-12">
+          <div className="space-y-12 mb-20">
             {departments.map((dept, index) => (
               <DepartmentSection key={index} {...dept} />
             ))}
+          </div>
+
+          {/* ✅ Group Photo Section */}
+          <div className="text-center mb-16">
+            <h2 className="text-xl md:text-2xl font-semibold text-white mb-4">
+              Our Full Team
+            </h2>
+            <p className="text-gray-400 text-sm mb-4">
+              A snapshot of everyone who makes the Alumni Relations Cell thrive.
+            </p>
+            <div className="max-w-5xl mx-auto">
+              <img
+                src="https://res.cloudinary.com/dbl2so7ff/image/upload/v1762925092/team_hokwxb.jpg"
+                alt="ARC Team Group Photo"
+                className="rounded-xl shadow-xl border border-white/10 w-full object-cover transition-transform duration-500 hover:scale-[1.02]"
+              />
+            </div>
           </div>
         </section>
 

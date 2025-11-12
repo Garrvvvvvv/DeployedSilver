@@ -8,8 +8,9 @@ import {
   Container,
   Avatar,
   IconButton,
-  Collapse,
   Paper,
+  useTheme,
+  useMediaQuery,
 } from '@mui/material';
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircleRoundedIcon from "@mui/icons-material/AccountCircleRounded";
@@ -22,7 +23,7 @@ const pages = [
   { name: 'Registration', path: '/register' },
 ];
 
-// read user from localStorage
+// Read user from localStorage
 function getAuthUser() {
   try {
     const raw = localStorage.getItem('app_auth');
@@ -33,12 +34,15 @@ function getAuthUser() {
   }
 }
 
-function ResponsiveAppBar() {
+export default function ResponsiveAppBar() {
+  const theme = useTheme();
+  const isDesktop = useMediaQuery(theme.breakpoints.up('md')); // ✅ detect desktop vs mobile
   const location = useLocation();
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [user, setUser] = React.useState(() => getAuthUser());
+  const scrollYRef = React.useRef(0);
 
-  const toggleMobileMenu = () => setMobileOpen((prev) => !prev);
+  const toggleMobileMenu = () => setMobileOpen((s) => !s);
 
   React.useEffect(() => {
     const onStorage = (e) => {
@@ -52,21 +56,56 @@ function ResponsiveAppBar() {
     setUser(getAuthUser());
   }, [location.pathname]);
 
+  // Scroll-lock / preserve position (only when menu open)
+  React.useEffect(() => {
+    if (mobileOpen) {
+      scrollYRef.current = window.scrollY || window.pageYOffset || 0;
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollYRef.current}px`;
+      document.body.style.left = '0';
+      document.body.style.right = '0';
+      document.body.style.overflow = 'hidden';
+      document.body.style.width = '100%';
+    } else {
+      const saved = scrollYRef.current;
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      document.body.style.width = '';
+      window.scrollTo(0, saved);
+    }
+
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      document.body.style.width = '';
+    };
+  }, [mobileOpen]);
+
   const firstName = user?.name ? user.name.split(' ')[0] : null;
   const greeting = user ? `Welcome ${firstName}` : 'Welcome User';
 
-  // avatar logic
   const avatarSrc = user?.picture || '';
   const showDefaultIcon = !avatarSrc;
+  const appBarHeight = 64;
 
   return (
     <>
       <AppBar
-        position="sticky"
-        sx={{ backgroundColor: 'rgba(0,0,0,1)', boxShadow: 'none', zIndex: 1201 }}
+        position={isDesktop ? 'sticky' : 'fixed'} // ✅ Sticky on desktop, Fixed on mobile
+        sx={{
+          backgroundColor: 'rgba(0,0,0,1)',
+          boxShadow: 'none',
+          zIndex: theme.zIndex.appBar,
+        }}
       >
         <Container maxWidth="xl">
-          <Toolbar sx={{ justifyContent: 'space-between' }}>
+          <Toolbar sx={{ justifyContent: 'space-between', minHeight: appBarHeight }}>
             {/* Left: Greeting + avatar */}
             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.25 }}>
               <Avatar
@@ -87,7 +126,8 @@ function ResponsiveAppBar() {
               <Box sx={{ lineHeight: 1 }}>
                 <Typography
                   sx={{
-                    fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                    fontFamily:
+                      'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
                     fontWeight: 700,
                     fontSize: { xs: '1rem', sm: '1.1rem' },
                     color: '#f1f1f1',
@@ -98,7 +138,8 @@ function ResponsiveAppBar() {
                 </Typography>
                 <Typography
                   sx={{
-                    fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                    fontFamily:
+                      'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
                     fontWeight: 500,
                     fontSize: '0.72rem',
                     color: 'rgba(255,255,255,0.6)',
@@ -122,7 +163,7 @@ function ResponsiveAppBar() {
                 display: { xs: 'none', md: 'flex' },
                 alignItems: 'center',
                 justifyContent: 'center',
-                zIndex: 1300,
+                zIndex: theme.zIndex.appBar + 10,
               }}
             >
               <Avatar
@@ -143,10 +184,13 @@ function ResponsiveAppBar() {
                   <Button
                     sx={{
                       color: 'white',
-                      fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                      fontFamily:
+                        'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
                       fontWeight: location.pathname === page.path ? 700 : 500,
                       borderBottom:
-                        location.pathname === page.path ? '2px solid #ff6b6b' : 'none',
+                        location.pathname === page.path
+                          ? '2px solid #ff6b6b'
+                          : 'none',
                       borderRadius: 0,
                       px: 1,
                       '&:hover': { borderBottom: '2px solid #ff6b6b' },
@@ -161,6 +205,8 @@ function ResponsiveAppBar() {
             {/* Mobile Menu Icon */}
             <IconButton
               onClick={toggleMobileMenu}
+              aria-expanded={mobileOpen}
+              aria-label="open mobile menu"
               sx={{ display: { xs: 'flex', md: 'none' }, color: 'white' }}
             >
               <MenuIcon />
@@ -169,55 +215,62 @@ function ResponsiveAppBar() {
         </Container>
       </AppBar>
 
-      {/* Mobile Dropdown Menu */}
-      <Collapse in={mobileOpen} timeout={300} sx={{ transition: 'height 300ms ease-in-out' }}>
-        <Paper
-          elevation={0}
-          sx={{
-            width: '100%',
-            zIndex: 1200,
-            backgroundColor: 'rgba(0, 0, 0, 0.95)',
-            backdropFilter: 'blur(8px)',
-            pt: 2,
-            pb: 4,
-            px: 2,
-            display: { xs: 'flex', md: 'none' },
-            flexDirection: 'column',
-            gap: 2,
-            alignItems: 'center',
-            position: 'relative',
-            top: 0,
-          }}
-        >
-          {pages.map((page) => (
-            <Link
-              key={page.name}
-              to={page.path}
-              style={{ textDecoration: 'none', width: '100%' }}
-              onClick={() => setMobileOpen(false)}
+      {/* Mobile Menu (unchanged design, sits below AppBar) */}
+      <Paper
+        elevation={0}
+        square
+        sx={{
+          position: 'fixed',
+          left: 0,
+          right: 0,
+          top: 0,
+          height: '310px',
+          zIndex: theme.zIndex.appBar - 1,
+          backgroundColor: 'rgba(0,0,0,0.95)',
+          backdropFilter: 'blur(8px)',
+          display: { xs: 'flex', md: 'none' },
+          flexDirection: 'column',
+          alignItems: 'center',
+          px: 2,
+          pt: `${appBarHeight}px`,
+          pb: 4,
+          gap: 2,
+          transform: mobileOpen ? 'translateY(0)' : 'translateY(-6%)',
+          opacity: mobileOpen ? 1 : 0,
+          pointerEvents: mobileOpen ? 'auto' : 'none',
+          transition:
+            'transform 280ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease',
+          overflowY: 'auto',
+        }}
+      >
+        {pages.map((page) => (
+          <Link
+            key={page.name}
+            to={page.path}
+            style={{ textDecoration: 'none', width: '100%' }}
+            onClick={() => setMobileOpen(false)}
+          >
+            <Button
+              fullWidth
+              sx={{
+                color: 'white',
+                fontFamily:
+                  'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
+                fontWeight: location.pathname === page.path ? 700 : 500,
+                borderBottom:
+                  location.pathname === page.path
+                    ? '2px solid #ff6b6b'
+                    : 'none',
+                borderRadius: 0,
+                py: 1.2,
+                '&:hover': { backgroundColor: 'rgba(255,255,255,0.06)' },
+              }}
             >
-              <Button
-                fullWidth
-                sx={{
-                  color: 'white',
-                  fontFamily: 'Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto',
-                  fontWeight: location.pathname === page.path ? 700 : 500,
-                  borderBottom:
-                    location.pathname === page.path ? '2px solid #ff6b6b' : 'none',
-                  borderRadius: 0,
-                  py: 1.2,
-                  '&:hover': { backgroundColor: 'rgba(255,255,255,0.1)' },
-                }}
-              >
-                {page.name}
-              </Button>
-            </Link>
-          ))}
-        </Paper>
-      </Collapse>
+              {page.name}
+            </Button>
+          </Link>
+        ))}
+      </Paper>
     </>
   );
 }
-
-export default ResponsiveAppBar;
-  
