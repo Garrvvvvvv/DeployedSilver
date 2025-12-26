@@ -6,7 +6,7 @@ import './App.css';
 import Home from './pages/main/home';
 import Memories from './pages/main/memories';
 import EventFlow from './pages/main/eventFlow';
-import Registration from './pages/main/registration';
+import ClosedRegisteration from './pages/main/closedregisteration';
 import Meetourteam from './pages/main/meetourteam';
 import RoomAllocation from './pages/main/RoomAllocation'; // NEW
 import ResponsiveAppBar from './components/navbar.jsx';
@@ -53,7 +53,7 @@ function App() {
           path="/register"
           element={
             <UserProtectedRoute>
-              <Registration />
+              <ClosedRegisteration />
             </UserProtectedRoute>
           }
         />
